@@ -1,0 +1,29 @@
+{
+  "name": "la-bitacora-viajera",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "bootstrap": "^5.3.6",
+    "imagesloaded": "^5.0.0",
+    "jwt-decode": "^4.0.0",
+    "leaflet": "^1.9.4",
+    "masonry-layout": "^4.2.2",
+    "react-dropzone": "^14.3.8",
+    "react-hook-form": "^7.57.0",
+    "react-leaflet": "^5.0.0",
+    "react-masonry-css": "^1.0.16",
+    "react-toastify": "^11.0.5",
+    "reactstrap": "^9.2.3",
+    "sass": "^1.89.2"
+  },
+  "devDependencies": {
+    "@types/imagesloaded": "^4.1.7",
+    "@types/leaflet": "^1.9.18",
+    "@types/masonry-layout": "^4.2.8",
+    "@types/reactstrap": "^8.7.2"
+  }
+}
