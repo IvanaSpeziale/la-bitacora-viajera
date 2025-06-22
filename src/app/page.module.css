@@ -7,11 +7,11 @@
   --button-secondary-hover: #f2f2f2;
 
   display: grid;
-  grid-template-rows: 20px 1fr 20px;
-  align-items: center;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
   justify-items: center;
   min-height: 100svh;
-  padding: 80px;
+  /* padding: 80px; */
   gap: 64px;
   font-family: var(--font-geist-sans);
 }
@@ -32,6 +32,7 @@
   flex-direction: column;
   gap: 32px;
   grid-row-start: 2;
+  width: 100%;
 }
 
 .main ol {
@@ -68,10 +69,7 @@
   padding: 0 20px;
   border: none;
   border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -108,7 +106,13 @@ a.secondary {
   flex-shrink: 0;
 }
 
-/* Enable hover only on non-touch devices */
+.noPhotosMessage {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--gray-alpha-200);
+  text-align: center;
+}
+
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
     background: var(--button-primary-hover);
@@ -165,4 +169,14 @@ a.secondary {
   .logo {
     filter: invert();
   }
+}
+
+.centeredUnderlined {
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: #c8a2c8;
+  text-underline-offset: 4px;
+  margin: 16px 0;
+  font-size: 1.5rem;
+  font-weight: bold;
 }

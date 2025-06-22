@@ -1,0 +1,21 @@
+@use "@/core/constants/variables.module.scss" as vars;
+
+.backArrow {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-family: vars.$font_0;
+  font-size: 1rem;
+  color: vars.$secondary-color;
+  transition: color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.backArrow:hover {
+  color: vars.$tertiary-color;
+}
+
+.arrow {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
