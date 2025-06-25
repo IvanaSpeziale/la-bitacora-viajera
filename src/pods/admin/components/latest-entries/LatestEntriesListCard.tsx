@@ -45,15 +45,6 @@ export const LatestEntriesListCard: React.FC = () => {
               />
             )}
           </div>
-          {/* <div className={styles.actionsSection}>
-            <button
-              className={styles.editBtn}
-              title="Ver entrada"
-              onClick={() => handleRedirection(entry.id)}
-            >
-              <FaEye />
-            </button>
-          </div> */}
         </div>
       ))}
     </div>
