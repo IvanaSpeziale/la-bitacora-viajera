@@ -1,7 +1,7 @@
 export interface Account {
   id: string;
   email: string;
-  isAdmin: boolean;
+  is_admin: boolean;
   createdAt: Date;
   isActive: boolean;
 }

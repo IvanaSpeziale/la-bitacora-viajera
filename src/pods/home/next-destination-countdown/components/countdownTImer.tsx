@@ -266,6 +266,7 @@ const CountdownTimer: React.FC = () => {
                 placeholder="Target Date"
                 value={newDestination.targetDate}
                 className={styles.input}
+                min={new Date().toISOString().slice(0, 16)}
                 onChange={(e) =>
                   setNewDestination({
                     ...newDestination,

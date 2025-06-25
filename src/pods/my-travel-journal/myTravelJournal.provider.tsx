@@ -38,6 +38,20 @@ export const MyTravelJournalProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
+  const fetchEntries = async (): Promise<
+    MyTravelJournalContextType["entries"] | null
+  > => {
+    try {
+      const data = await myTravelJournalRepository.getAllJournalEntries();
+      const transformedEntries = transformEntries(data);
+      setEntries(transformedEntries);
+      return transformedEntries;
+    } catch (error) {
+      console.error("Error fetching entries:", error);
+      return null;
+    }
+  };
+
   const fetchMyEntries = async (): Promise<
     MyTravelJournalContextType["entries"] | null
   > => {
@@ -110,6 +124,7 @@ export const MyTravelJournalProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         entries,
         entry,
+        fetchEntries,
         fetchMyEntries,
         fetchEntryById,
         addEntry,

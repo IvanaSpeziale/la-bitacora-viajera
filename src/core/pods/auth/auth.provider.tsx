@@ -3,17 +3,18 @@
 import ApiUrl from "@/core/api-config/apiUrl";
 import { BrowserStorage } from "@/core/storage/browserStorage";
 import { LoginValidation, Validators } from "@/core/utils/validations";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, use, useEffect, useMemo, useState } from "react";
 import { createAuthRepository } from "./api/authApi";
 import { LoginRequestDTO } from "./DTOs/loginRequestDTO";
 import { SignupRequestDTO } from "./DTOs/signUpRequestDTO";
 import { AuthContextType } from "./vm/auth.vm";
 import { User } from "./entities/user";
-import { EditUserDTO } from "../users/DTOs/editUserDTO";
+import { EditUserDTO } from "../auth/DTOs/editUserDTO";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { TokenUtils } from "@/core/utils/tokenUtils";
+import { createAdminRepository } from "@/pods/admin/api/adminUsers.api";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -26,14 +27,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [accountId, setAccountId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const router = useRouter();
 
+  const browserStorage = useMemo(() => new BrowserStorage(), []);
+
   const authRepository = useMemo(
-    () => createAuthRepository(ApiUrl, new BrowserStorage()),
-    []
+    () => createAuthRepository(ApiUrl, browserStorage),
+    [browserStorage]
+  );
+  const adminRepository = useMemo(
+    () => createAdminRepository(ApiUrl, browserStorage),
+    [browserStorage]
+  );
+  const tokenUtils = useMemo(
+    () => TokenUtils(browserStorage),
+    [browserStorage]
   );
 
-  const tokenUtils = TokenUtils(new BrowserStorage());
+  // Métodos admin
+  const fetchAdminUsers = async () => {
+    console.log("[PROVIDER] Llamando a adminRepository.getUsers()");
+    return await adminRepository.getAdminUsers();
+  };
+
+  const fetchAdminUserById = async (id: string) => {
+    return await adminRepository.getUserById(id);
+  };
+
+  const editAdminUser = async (updatedDetails: EditUserDTO) => {
+    try {
+      const existingUser = await adminRepository.getUserById(updatedDetails.id);
+      await adminRepository.editUser({
+        ...existingUser,
+        is_admin:
+          typeof updatedDetails.is_admin === "boolean"
+            ? updatedDetails.is_admin
+            : existingUser.is_admin,
+      });
+    } catch (error) {
+      console.error(
+        "[AUTH PROVIDER] Error editando usuario como admin:",
+        error
+      );
+      throw error;
+    }
+  };
+  const deleteUser = async (id: string) => {
+    return await adminRepository.deleteUser(id);
+  };
 
   // ------------------------------------------------------------------
   // Funciones auxiliares
@@ -69,9 +111,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // ------------------------------------------------------------------
-  // Verificar si hay sesión activa al montar
-  // ------------------------------------------------------------------
   const checkSession = async () => {
     try {
       setCheckingSession(true);
@@ -82,7 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setIsLoggedIn(true);
           setAccountId(account.accountId);
           setEmail(account.email);
-          setUser(await authRepository.getUsers());
+          setUser(await authRepository.getMyUser());
           checkTokenTimeout();
         }
       }
@@ -104,9 +143,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [isLoggedIn]);
 
-  // ------------------------------------------------------------------
-  // login, signup, logout
-  // ------------------------------------------------------------------
+  useEffect(() => {
+    if (isLoggedIn && user?.is_admin) {
+      fetchAdminUsers();
+    }
+  }, [isLoggedIn, user?.is_admin]);
 
   const login = async (u: string, p: string) => {
     const email = u.trim().toLocaleLowerCase();
@@ -127,6 +168,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setIsLoggedIn(true);
           setAccountId(decodedToken.accountId);
           setEmail(decodedToken.email);
+
+          const myUser = await authRepository.getMyUser();
+
+          setUser(myUser);
         } catch (error) {
           console.error("Error al decodificar el token:", error);
           return { email: "", password: "Error al procesar el token recibido" };
@@ -270,10 +315,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         signup,
         logout,
         editUser,
+        users,
+        editAdminUser, // <-- expuesto para admin
         isLoggedIn,
         accountId,
         email,
         user,
+        fetchAdminUsers,
+        fetchAdminUserById,
+        deleteUser,
       }}
     >
       {children}

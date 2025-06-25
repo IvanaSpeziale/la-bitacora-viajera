@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -39,9 +39,11 @@ const Header: React.FC = () => {
         </Link>
       </div>
       <nav className={styles.nav}>
-        <Link href="/journal-dashboard" className={styles.navLink}>
-          Mis bitácoras
-        </Link>
+        {!user?.is_admin && (
+          <Link href="/journal-dashboard" className={styles.navLink}>
+            Mis bitácoras
+          </Link>
+        )}
       </nav>
       <div
         className={styles.userMenu}
@@ -56,7 +58,7 @@ const Header: React.FC = () => {
           onMouseEnter={() => setMenuOpen(true)}
           onMouseLeave={() => setMenuOpen(false)}
         >
-          <Link href="/profile">Mis datos</Link>
+          <Link href="/edit-user">Mis datos</Link>
           <button onClick={handleLogout}>Logout</button>
         </div>
       </div>

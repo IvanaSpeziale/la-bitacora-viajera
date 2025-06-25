@@ -92,6 +92,18 @@ export const createMyTravelJournalRepository = (
     }
   };
 
+  const getAllJournalEntries = async (): Promise<JournalEntry[]> => {
+    try {
+      const response = await axios.get(`${baseUrl}/journal-entries`, {
+        headers: getAuthHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all journal entries:", error);
+      throw error;
+    }
+  };
+
   return {
     getMyJournalEntries,
     getJournalEntryById,
@@ -99,5 +111,6 @@ export const createMyTravelJournalRepository = (
     updateJournalEntry,
     deleteJournalEntry,
     searchLocations,
+    getAllJournalEntries,
   };
 };

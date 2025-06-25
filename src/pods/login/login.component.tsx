@@ -1,5 +1,5 @@
 "use client";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.scss";
@@ -12,11 +12,26 @@ const Login: React.FC = () => {
     throw new Error("AuthContext no está disponible.");
   }
 
-  const { login } = authContext;
+  const { login, user } = authContext;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
   const router = useRouter();
+
+  // Redirección reactiva tras login exitoso y usuario actualizado
+  useEffect(() => {
+    console.log("[LOGIN DEBUG] isLoginSuccess:", isLoginSuccess, "user:", user);
+    if (isLoginSuccess && user) {
+      if (user && user.is_admin) {
+        console.log("[LOGIN DEBUG] Redirigiendo a /admin");
+        router.push("/admin");
+      } else {
+        console.log("[LOGIN DEBUG] Redirigiendo a /");
+        router.push("/");
+      }
+    }
+  }, [isLoginSuccess, user, router]);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,14 +44,16 @@ const Login: React.FC = () => {
         setError(validation.email || validation.password);
         setEmail("");
         setPassword("");
+        setIsLoginSuccess(false);
         return;
       }
 
       toast.success("Inicio de sesión exitoso");
-      router.push("/");
+      setIsLoginSuccess(true);
     } catch (err) {
       console.error("Error al iniciar sesión:", err);
       setError("Error al conectar con el servidor");
+      setIsLoginSuccess(false);
     }
   };
 

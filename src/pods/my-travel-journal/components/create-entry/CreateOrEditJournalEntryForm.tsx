@@ -20,7 +20,7 @@ const CreateJournalEntryForm: React.FC<CreateJournalEntryFormProps> = ({
     useMyTravelJournal();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const entryId = searchParams.get("id");
+  const entryId = searchParams?.get("id");
 
   const {
     register,
@@ -144,6 +144,7 @@ const CreateJournalEntryForm: React.FC<CreateJournalEntryFormProps> = ({
           type="date"
           placeholder="Fecha"
           className={styles.inputCreateForm}
+          max={new Date().toISOString().split("T")[0]}
           {...register("date", { required: "La fecha es obligatoria" })}
         />
         {errors.date && <p className={styles.error}>{errors.date.message}</p>}

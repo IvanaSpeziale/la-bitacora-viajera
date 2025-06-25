@@ -98,6 +98,7 @@ const Signup: React.FC = () => {
             type="email"
             placeholder="Correo electrónico"
             className={styles.input}
+            disabled
             {...register("email", {
               required: "El email es obligatorio",
               pattern: {

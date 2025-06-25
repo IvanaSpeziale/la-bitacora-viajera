@@ -4,6 +4,7 @@ import { Location } from "../entities/location";
 export interface MyTravelJournalContextType {
   entries: JournalEntry[];
   entry: JournalEntry | null;
+  fetchEntries: () => Promise<JournalEntry[] | null>;
   fetchMyEntries: () => Promise<JournalEntry[] | null>;
   fetchEntryById: (id: string) => Promise<JournalEntry | null>;
   addEntry: (entry: FormData) => Promise<void>;

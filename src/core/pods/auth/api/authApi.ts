@@ -5,7 +5,7 @@ import { AuthResponseDTO } from "../DTOs/authResponseDTO";
 import { LoginRequestDTO } from "../DTOs/loginRequestDTO";
 import { SignupRequestDTO } from "../DTOs/signUpRequestDTO";
 import { User } from "../entities/user";
-import { EditUserDTO } from "../../users/DTOs/editUserDTO";
+import { EditUserDTO } from "../DTOs/editUserDTO";
 import axios from "axios";
 import { AccountResponseDTO } from "../../accounts/DTOs/accountResponseDTO";
 
@@ -18,8 +18,8 @@ export const createAuthRepository = (
   const login = async (request: LoginRequestDTO): Promise<AuthResponseDTO> => {
     try {
       const response = await axios.post(`${baseUrl}/login`, request);
-      const dataResponse: AuthResponseDTO = response.data;
-      await tokenUtils.handleTokenUpdate(dataResponse.token);
+      // const dataResponse: AuthResponseDTO = response.data;
+      // await tokenUtils.handleTokenUpdate(dataResponse.token);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -44,16 +44,13 @@ export const createAuthRepository = (
     }
   };
 
-  const getUsers = async (): Promise<User> => {
+  const getMyUser = async (): Promise<User> => {
     try {
       const response = await axios.get(`${baseUrl}/user/me`, {
         headers: tokenUtils.getAuthHeaders(),
       });
 
-      tokenUtils.handleTokenUpdate(response.data.accessToken);
-
-      const responseApi: ApiResponseDTO = response.data;
-      return responseApi.data as User;
+      return response.data as User;
     } catch (error) {
       console.error("Error getting user details", error);
       throw error;
@@ -67,7 +64,6 @@ export const createAuthRepository = (
         updatedDetails,
         { headers: tokenUtils.getAuthHeaders() }
       );
-      tokenUtils.handleTokenUpdate(response.data.accessToken);
     } catch (error) {
       console.error("Error updating user details", error);
       throw error;
@@ -79,7 +75,6 @@ export const createAuthRepository = (
       const response = await axios.get(`${baseUrl}/accounts/me`, {
         headers: tokenUtils.getAuthHeaders(),
       });
-      tokenUtils.handleTokenUpdate(response.data.accessToken);
       return response.data.data as AccountResponseDTO;
     } catch (error) {
       console.error("Error getting account", error);
@@ -97,14 +92,52 @@ export const createAuthRepository = (
 
   const getBearerToken = (): string | null => tokenUtils.getBearerToken();
 
+  const getAdminUsers = async (): Promise<User[]> => {
+    try {
+      const response = await axios.get(`${baseUrl}/admin/users`, {
+        headers: tokenUtils.getAuthHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  };
+
+  const getUserById = async (id: string): Promise<User> => {
+    try {
+      const response = await axios.get(`${baseUrl}/admin/users/${id}`, {
+        headers: tokenUtils.getAuthHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching user with id ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const deleteUser = async (id: string): Promise<void> => {
+    try {
+      await axios.delete(`${baseUrl}/admin/users/${id}`, {
+        headers: tokenUtils.getAuthHeaders(),
+      });
+    } catch (error) {
+      console.error(`Error deleting user with id ${id}:`, error);
+      throw error;
+    }
+  };
+
   return {
     login,
     logout,
     signup,
-    getUsers,
+    getMyUser,
     editUser,
     getMyAccount,
     isAuthenticated,
     getBearerToken,
+    getAdminUsers,
+    getUserById,
+    deleteUser,
   };
 };
