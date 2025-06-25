@@ -10,18 +10,11 @@ const PicsGallery: React.FC<PicsGalleryProps> = ({ images }) => {
   const [visibleImages, setVisibleImages] = useState(15);
 
   const loadMoreImages = () => {
-    setVisibleImages((prev) => Math.min(prev + 15, images.length)); // Asegurarse de no exceder el número total de imágenes
+    setVisibleImages((prev) => Math.min(prev + 15, images.length));
   };
 
   const loadLessImages = () => {
-    setVisibleImages((prev) => Math.max(prev - 15, 15)); // Asegurarse de no mostrar menos de 15 imágenes
-  };
-
-  const breakpointColumnsObj = {
-    default: 4,
-    1100: 3,
-    700: 2,
-    500: 1,
+    setVisibleImages((prev) => Math.max(prev - 15, 15));
   };
 
   return (

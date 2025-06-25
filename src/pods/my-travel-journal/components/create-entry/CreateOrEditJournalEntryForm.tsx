@@ -16,8 +16,7 @@ interface CreateJournalEntryFormProps {
 const CreateJournalEntryForm: React.FC<CreateJournalEntryFormProps> = ({
   entry,
 }) => {
-  const { addEntry, editEntry, fetchEntryById, removeEntry } =
-    useMyTravelJournal();
+  const { addEntry, editEntry, fetchEntryById } = useMyTravelJournal();
   const router = useRouter();
   const searchParams = useSearchParams();
   const entryId = searchParams?.get("id");
