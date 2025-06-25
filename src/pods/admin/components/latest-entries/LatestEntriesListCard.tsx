@@ -1,7 +1,6 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../latest-users/LatestUsersListCard.module.scss";
-import { FaEdit, FaEye } from "react-icons/fa";
 import { useMyTravelJournal } from "@/pods/my-travel-journal/hook/useMyTravelJournal";
 import { JournalEntry } from "@/pods/my-travel-journal/entities/journalEntry";
 import { useRouter } from "next/navigation";
@@ -16,10 +15,6 @@ export const LatestEntriesListCard: React.FC = () => {
       if (data) setEntries(data);
     });
   }, []);
-
-  const handleRedirection = (entryId: string) => {
-    router.push(`/admin//${entryId}`);
-  };
 
   return (
     <div className={styles.gridContainer}>

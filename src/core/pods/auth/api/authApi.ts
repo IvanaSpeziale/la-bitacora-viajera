@@ -1,4 +1,3 @@
-import { ApiResponseDTO } from "@/core/api-config/DTOs/apiResponseDTO";
 import StorageInterface from "@/core/storage/storageInterface";
 import { TokenUtils } from "@/core/utils/tokenUtils";
 import { AuthResponseDTO } from "../DTOs/authResponseDTO";

@@ -1,5 +1,3 @@
-import { Account } from "../entities/account";
-
 export class EditUserDTO {
   public id: string;
   public name: string;

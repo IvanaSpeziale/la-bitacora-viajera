@@ -38,6 +38,7 @@
 .userMenu {
   position: relative;
   display: inline-block;
+  padding-bottom: 24px; // Aumenta el área de hover para evitar que se cierre al mover el mouse
 }
 .userIcon {
   border: none;
@@ -48,23 +49,22 @@
 }
 
 .menuDropdown {
-  display: none;
   position: absolute;
-  top: 60px;
+  top: 50px; // Ajusta top de .menuDropdown para que el área de hover cubra el espacio entre el botón y el menú, evitando cierres inesperados
   right: 0;
   background-color: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   overflow: hidden;
   z-index: 1000;
+  min-width: 180px;
+  padding: 0;
+  margin: 0;
+  pointer-events: auto; /* Asegura que el área de hover cubra el espacio entre el botón y el menú */
 }
 
-.userMenu:hover .menuDropdown {
-  display: block; /* Mostrar al hacer hover */
-}
-
-.menuDropdown:hover {
-  display: block; /* Mantener visible mientras el cursor esté sobre el menú */
+.menuDropdown[style*="display: none"] {
+  display: none !important;
 }
 
 .menuDropdown a,

@@ -50,17 +50,28 @@ const Header: React.FC = () => {
         onMouseEnter={() => setMenuOpen(true)}
         onMouseLeave={() => setMenuOpen(false)}
       >
-        <button className={styles.userIcon}>
+        <button
+          className={styles.userIcon}
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-haspopup="true"
+          aria-expanded={menuOpen}
+          tabIndex={0}
+        >
           <img src="/images/user-icon.png" alt="User Icon" />
         </button>
-        <div
-          className={styles.menuDropdown}
-          onMouseEnter={() => setMenuOpen(true)}
-          onMouseLeave={() => setMenuOpen(false)}
-        >
-          <Link href="/edit-user">Mis datos</Link>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+        {menuOpen && (
+          <div
+            className={styles.menuDropdown}
+            tabIndex={0}
+            onMouseEnter={() => setMenuOpen(true)}
+            onMouseLeave={() => setMenuOpen(false)}
+            onFocus={() => setMenuOpen(true)}
+            onBlur={() => setMenuOpen(false)}
+          >
+            <Link href="/edit-user">Editar mis datos</Link>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        )}
       </div>
     </header>
   );
