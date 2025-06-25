@@ -2,7 +2,7 @@
 
 import ApiUrl from "@/core/api-config/apiUrl";
 import { BrowserStorage } from "@/core/storage/browserStorage";
-import { LoginValidation, Validators } from "@/core/utils/validations";
+import { Validators } from "@/core/utils/validations";
 import { createContext, use, useEffect, useMemo, useState } from "react";
 import { createAuthRepository } from "./api/authApi";
 import { LoginRequestDTO } from "./DTOs/loginRequestDTO";
@@ -21,7 +21,6 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // --- Estados de autenticación y usuario ---
   const [checkingSession, setCheckingSession] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accountId, setAccountId] = useState<string | null>(null);
@@ -45,7 +44,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     [browserStorage]
   );
 
-  // Métodos admin
   const fetchAdminUsers = async () => {
     console.log("[PROVIDER] Llamando a adminRepository.getUsers()");
     return await adminRepository.getAdminUsers();
@@ -316,7 +314,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         editUser,
         users,
-        editAdminUser, // <-- expuesto para admin
+        editAdminUser,
         isLoggedIn,
         accountId,
         email,
