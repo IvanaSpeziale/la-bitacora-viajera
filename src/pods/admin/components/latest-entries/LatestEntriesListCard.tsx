@@ -3,18 +3,17 @@ import React, { useEffect, useState } from "react";
 import styles from "../latest-users/LatestUsersListCard.module.scss";
 import { useMyTravelJournal } from "@/pods/my-travel-journal/hook/useMyTravelJournal";
 import { JournalEntry } from "@/pods/my-travel-journal/entities/journalEntry";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export const LatestEntriesListCard: React.FC = () => {
   const { fetchEntries } = useMyTravelJournal();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     fetchEntries().then((data) => {
       if (data) setEntries(data);
     });
-  }, []);
+  }, [fetchEntries]);
 
   return (
     <div className={styles.gridContainer}>
@@ -38,10 +37,12 @@ export const LatestEntriesListCard: React.FC = () => {
                 : "Sin lugar"}
             </div>
             {entry.imageUrls && entry.imageUrls.length > 0 && (
-              <img
+              <Image
                 src={entry.imageUrls[0]}
                 alt={entry.description?.slice(0, 20) || "Imagen entrada"}
                 className={styles.entryImage}
+                width={300}
+                height={200}
               />
             )}
           </div>

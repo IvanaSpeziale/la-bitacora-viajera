@@ -3,7 +3,13 @@
 import ApiUrl from "@/core/api-config/apiUrl";
 import { BrowserStorage } from "@/core/storage/browserStorage";
 import { Validators } from "@/core/utils/validations";
-import { createContext, use, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { createAuthRepository } from "./api/authApi";
 import { LoginRequestDTO } from "./DTOs/loginRequestDTO";
 import { SignupRequestDTO } from "./DTOs/signUpRequestDTO";
@@ -44,42 +50,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     [browserStorage]
   );
 
-  const fetchAdminUsers = async () => {
+  const fetchAdminUsers = useCallback(async () => {
     console.log("[PROVIDER] Llamando a adminRepository.getUsers()");
-    return await adminRepository.getAdminUsers();
-  };
+    const fetchedUsers = await adminRepository.getAdminUsers();
+    setUsers(fetchedUsers ?? []);
+    return fetchedUsers;
+  }, [adminRepository]);
 
-  const fetchAdminUserById = async (id: string) => {
-    return await adminRepository.getUserById(id);
-  };
+  const fetchAdminUserById = useCallback(
+    async (id: string) => {
+      return await adminRepository.getUserById(id);
+    },
+    [adminRepository]
+  );
 
-  const editAdminUser = async (updatedDetails: EditUserDTO) => {
-    try {
-      const existingUser = await adminRepository.getUserById(updatedDetails.id);
-      await adminRepository.editUser({
-        ...existingUser,
-        is_admin:
-          typeof updatedDetails.is_admin === "boolean"
-            ? updatedDetails.is_admin
-            : existingUser.is_admin,
-      });
-    } catch (error) {
-      console.error(
-        "[AUTH PROVIDER] Error editando usuario como admin:",
-        error
-      );
-      throw error;
-    }
-  };
-  const deleteUser = async (id: string) => {
-    return await adminRepository.deleteUser(id);
-  };
+  const editAdminUser = useCallback(
+    async (updatedDetails: EditUserDTO) => {
+      try {
+        const existingUser = await adminRepository.getUserById(
+          updatedDetails.id
+        );
+        await adminRepository.editUser({
+          ...existingUser,
+          is_admin:
+            typeof updatedDetails.is_admin === "boolean"
+              ? updatedDetails.is_admin
+              : existingUser.is_admin,
+        });
+      } catch (error) {
+        console.error(
+          "[AUTH PROVIDER] Error editando usuario como admin:",
+          error
+        );
+        throw error;
+      }
+    },
+    [adminRepository]
+  );
+
+  const deleteUser = useCallback(
+    async (id: string) => {
+      return await adminRepository.deleteUser(id);
+    },
+    [adminRepository]
+  );
 
   // ------------------------------------------------------------------
   // Funciones auxiliares
   // ------------------------------------------------------------------
 
-  const checkTokenTimeout = async () => {
+  const logout = useCallback(async () => {
+    await authRepository.logout();
+    setIsLoggedIn(false);
+    setAccountId(null);
+    setEmail(null);
+    setUser(null);
+    router.push("/login");
+  }, [authRepository, router]);
+
+  const checkTokenTimeout = useCallback(async () => {
     try {
       const token = await authRepository.getBearerToken();
       if (!token) {
@@ -107,9 +136,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Error checking token expiration:", error);
       logout();
     }
-  };
+  }, [authRepository, logout]);
 
-  const checkSession = async () => {
+  const checkSession = useCallback(async () => {
     try {
       setCheckingSession(true);
       const isAuthenticated = await authRepository.isAuthenticated();
@@ -129,23 +158,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setCheckingSession(false);
     }
-  };
+  }, [authRepository, checkTokenTimeout, logout]);
 
   useEffect(() => {
     checkSession();
-  }, []);
+  }, [checkSession]);
 
   useEffect(() => {
     if (isLoggedIn) {
       checkTokenTimeout();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, checkTokenTimeout]);
 
   useEffect(() => {
     if (isLoggedIn && user?.is_admin) {
       fetchAdminUsers();
     }
-  }, [isLoggedIn, user?.is_admin]);
+  }, [isLoggedIn, user?.is_admin, fetchAdminUsers]);
 
   const login = async (u: string, p: string) => {
     const email = u.trim().toLocaleLowerCase();
@@ -276,15 +305,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = async () => {
-    await authRepository.logout();
-    setIsLoggedIn(false);
-    setAccountId(null);
-    setEmail(null);
-    setUser(null);
-    router.push("/login");
-  };
-
   const editUser = async (updatedDetails: EditUserDTO) => {
     try {
       await authRepository.editUser(updatedDetails);
@@ -300,7 +320,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       });
       toast.success("Modificado correctamente");
-    } catch (error) {
+    } catch {
       toast.error("Error al modificar el usuario");
     }
   };

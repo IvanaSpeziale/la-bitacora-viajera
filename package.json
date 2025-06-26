@@ -1,11 +1,11 @@
 {
-  "name": "client",
+  "name": "la-bitacora-viajera",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import styles from "./picsGallery.module.scss";
 
 interface PicsGalleryProps {
@@ -22,10 +23,12 @@ const PicsGallery: React.FC<PicsGalleryProps> = ({ images }) => {
       <div className={styles.masonryGrid}>
         {images.slice(0, visibleImages).map((image, index) => (
           <div key={index} className={styles.masonryGridColumn}>
-            <img
+            <Image
               src={image}
               alt={`User image ${index}`}
               className={styles.image}
+              width={300}
+              height={200}
             />
           </div>
         ))}

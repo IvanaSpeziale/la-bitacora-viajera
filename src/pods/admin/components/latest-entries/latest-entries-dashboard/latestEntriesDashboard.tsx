@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useMyTravelJournal } from "@/pods/my-travel-journal/hook/useMyTravelJournal";
+import Image from "next/image";
 
 export const LatestEntriesDashboard = () => {
   const { fetchEntries, removeEntry } = useMyTravelJournal();
@@ -30,7 +31,7 @@ export const LatestEntriesDashboard = () => {
     };
 
     loadEntries();
-  }, []);
+  }, [fetchEntries]);
 
   const handleHomeRedirect = () => {
     router.push("/admin");
@@ -112,7 +113,13 @@ export const LatestEntriesDashboard = () => {
                     {selectedEntry.imageUrls?.length ? (
                       selectedEntry.imageUrls.map(
                         (image: string, index: number) => (
-                          <img key={index} src={image} alt={`Image ${index}`} />
+                          <Image
+                            key={index}
+                            src={image}
+                            alt={`Image ${index}`}
+                            width={300}
+                            height={200}
+                          />
                         )
                       )
                     ) : (

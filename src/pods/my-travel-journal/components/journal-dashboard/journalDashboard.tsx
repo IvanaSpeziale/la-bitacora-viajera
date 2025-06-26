@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useMyTravelJournal } from "../../hook/useMyTravelJournal";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 export const JournalDashboard = () => {
   const { fetchMyEntries, removeEntry } = useMyTravelJournal();
@@ -30,7 +31,7 @@ export const JournalDashboard = () => {
     };
 
     loadEntries();
-  }, []);
+  }, [fetchMyEntries]);
 
   const handleEntryCreationRedirect = () => {
     router.push("/create-journal-entry");
@@ -135,7 +136,13 @@ export const JournalDashboard = () => {
                     {selectedEntry.imageUrls?.length ? (
                       selectedEntry.imageUrls.map(
                         (image: string, index: number) => (
-                          <img key={index} src={image} alt={`Image ${index}`} />
+                          <Image
+                            key={index}
+                            src={image}
+                            alt={`Image ${index}`}
+                            width={300}
+                            height={200}
+                          />
                         )
                       )
                     ) : (

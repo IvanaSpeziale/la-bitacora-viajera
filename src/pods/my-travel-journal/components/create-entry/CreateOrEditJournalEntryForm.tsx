@@ -58,7 +58,7 @@ const CreateJournalEntryForm: React.FC<CreateJournalEntryFormProps> = ({
     };
 
     loadEntry();
-  }, []);
+  }, [entryId, fetchEntryById, reset]);
 
   const handleImgChange = (
     e: React.ChangeEvent<HTMLInputElement>,

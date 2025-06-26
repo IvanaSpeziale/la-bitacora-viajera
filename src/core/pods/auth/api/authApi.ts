@@ -17,8 +17,6 @@ export const createAuthRepository = (
   const login = async (request: LoginRequestDTO): Promise<AuthResponseDTO> => {
     try {
       const response = await axios.post(`${baseUrl}/login`, request);
-      // const dataResponse: AuthResponseDTO = response.data;
-      // await tokenUtils.handleTokenUpdate(dataResponse.token);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -58,11 +56,9 @@ export const createAuthRepository = (
 
   const editUser = async (updatedDetails: EditUserDTO): Promise<void> => {
     try {
-      const response = await axios.put(
-        `${baseUrl}/user/${updatedDetails.id}`,
-        updatedDetails,
-        { headers: tokenUtils.getAuthHeaders() }
-      );
+      await axios.put(`${baseUrl}/user/${updatedDetails.id}`, updatedDetails, {
+        headers: tokenUtils.getAuthHeaders(),
+      });
     } catch (error) {
       console.error("Error updating user details", error);
       throw error;

@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./header.module.scss";
 import { useAuth } from "@/core/pods/auth/hook/useAuth";
 
@@ -10,7 +11,7 @@ const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout, user } = useAuth();
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     if (currentScrollY > lastScrollY && currentScrollY > 50) {
       setIsHidden(true);
@@ -18,14 +19,14 @@ const Header: React.FC = () => {
       setIsHidden(false);
     }
     setLastScrollY(currentScrollY);
-  };
+  }, [lastScrollY]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, [handleScroll]);
 
   const handleLogout = () => {
     logout();
@@ -35,7 +36,7 @@ const Header: React.FC = () => {
     <header className={`${styles.header} ${isHidden ? styles.hidden : ""}`}>
       <div className={styles.logo}>
         <Link href="/">
-          <img src="/images/logo.png" alt="Logo" />
+          <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
         </Link>
       </div>
       <nav className={styles.nav}>
@@ -57,7 +58,12 @@ const Header: React.FC = () => {
           aria-expanded={menuOpen}
           tabIndex={0}
         >
-          <img src="/images/user-icon.png" alt="User Icon" />
+          <Image
+            src="/images/user-icon.png"
+            alt="User Icon"
+            width={32}
+            height={32}
+          />
         </button>
         {menuOpen && (
           <div

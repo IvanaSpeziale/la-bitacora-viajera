@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { NextDestination } from "./entities/nextDestination";
 import { createNextDestinationRepository } from "./api/nextDestination.api";
 import ApiUrl from "@/core/api-config/apiUrl";
@@ -23,7 +23,9 @@ export const NextDestinationProvider: React.FC<{
     new BrowserStorage()
   );
 
-  const fetchNextDestinations = async (): Promise<NextDestination[] | null> => {
+  const fetchNextDestinations = useCallback(async (): Promise<
+    NextDestination[] | null
+  > => {
     try {
       const destinations =
         await nextDestinationRepository.getNextDestinations();
@@ -44,7 +46,7 @@ export const NextDestinationProvider: React.FC<{
       console.error("Error fetching next destinations:", error);
       return null;
     }
-  };
+  }, [nextDestinationRepository]);
 
   const addNextDestination = async (
     destination: NextDestinationDTO
@@ -119,7 +121,7 @@ export const NextDestinationProvider: React.FC<{
 
   useEffect(() => {
     fetchNextDestinations();
-  }, []);
+  }, [fetchNextDestinations]);
 
   return (
     <NextDestinationContext.Provider

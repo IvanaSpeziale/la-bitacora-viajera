@@ -2,26 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
 import { Location } from "../../entities/location";
 import { useMyTravelJournal } from "../../hook/useMyTravelJournal";
 import axios from "axios";
-import L from "leaflet";
 import styles from "./LocationSelector.module.scss";
-
-L.Icon.Default.mergeOptions({
-  iconUrl: "/images/leaflet/marker-icon.png",
-  shadowUrl: "/images/leaflet/marker-shadow.svg",
-});
-
-const customIcon = new L.Icon({
-  iconUrl: "/images/leaflet/marker-icon.png",
-  shadowUrl: "/images/leaflet/marker-shadow.svg",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -55,11 +39,35 @@ export const LocationSelector = ({
   const [locations, setLocations] = useState<Location[]>([]);
   const [isSingleSelection, setIsSingleSelection] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
+  const [customIcon, setCustomIcon] = useState<any>(null);
 
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (typeof window !== "undefined") {
+        await import("leaflet/dist/leaflet.css");
+        const L = await import("leaflet");
+        L.Icon.Default.mergeOptions({
+          iconUrl: "/images/leaflet/marker-icon.png",
+          shadowUrl: "/images/leaflet/marker-shadow.svg",
+        });
+        setCustomIcon(
+          new L.Icon({
+            iconUrl: "/images/leaflet/marker-icon.png",
+            shadowUrl: "/images/leaflet/marker-shadow.svg",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          })
+        );
+      }
+    })();
   }, []);
 
   const parseLocation = (loc: any): Location | null => {
@@ -115,18 +123,22 @@ export const LocationSelector = ({
   };
 
   const handleGeolocation = () => {
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      try {
-        const res = await axios.get(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-        );
-        const parsedLoc = parseLocation(res.data);
-        if (parsedLoc) addLocation(parsedLoc);
-      } catch (error) {
-        console.error("Error fetching location data:", error);
-      }
-    });
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await axios.get(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const parsedLoc = parseLocation(res.data);
+          if (parsedLoc) addLocation(parsedLoc);
+        } catch (error) {
+          console.error("Error fetching location data:", error);
+        }
+      });
+    } else {
+      console.warn("Geolocation is not available.");
+    }
   };
 
   return (
@@ -159,7 +171,7 @@ export const LocationSelector = ({
         ))}
       </ul>
 
-      {hasMounted && (
+      {hasMounted && customIcon && (
         <MapContainer
           ref={mapRef}
           center={[40, -3]}
