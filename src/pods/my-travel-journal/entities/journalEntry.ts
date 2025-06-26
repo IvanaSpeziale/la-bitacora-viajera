@@ -9,6 +9,7 @@ export class JournalEntry {
   favorite: string;
   leastFavorite: string;
   score: number;
+  userId?: string;
   imageUrls: string[];
 
   constructor(
@@ -20,11 +21,13 @@ export class JournalEntry {
     favorite: string,
     leastFavorite: string,
     score: number,
+    userId: string,
     imageUrls: string[]
   ) {
     this.id = id;
     this.locations = locations;
     this.date = date;
+    this.userId = userId;
     this.description = description;
     this.dailyExpenses = dailyExpenses;
     this.favorite = favorite;

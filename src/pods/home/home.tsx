@@ -6,14 +6,18 @@ import styles from "../../app/page.module.css";
 import CountdownTimer from "@/pods/home/next-destination-countdown/components/countdownTImer";
 import dynamic from "next/dynamic";
 import { useMyTravelJournal } from "@/pods/my-travel-journal/hook/useMyTravelJournal";
+import { useAuth } from "@/core/pods/auth/hook/useAuth";
 const MapWithPins = dynamic(() => import("@/pods/home/map/mapWithPins"), {
   ssr: false,
 });
 
 export default function Home() {
   const { entries } = useMyTravelJournal();
+  const { user } = useAuth();
 
-  const locations = entries
+  const userEntries = entries.filter((entry) => entry.userId === user?.id);
+
+  const locations = userEntries
     .filter((entry) => {
       const visitDate = new Date(entry.date);
       return visitDate < new Date();
@@ -26,7 +30,7 @@ export default function Home() {
       }))
     );
 
-  const images = entries.flatMap((entry) => entry.imageUrls);
+  const images = userEntries.flatMap((entry) => entry.imageUrls);
 
   return (
     <>

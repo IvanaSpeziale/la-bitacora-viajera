@@ -5,11 +5,13 @@ import { useMyTravelJournal } from "../../hook/useMyTravelJournal";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { JournalEntry } from "../../entities/journalEntry";
 
 export const JournalDashboard = () => {
   const { fetchMyEntries, removeEntry } = useMyTravelJournal();
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +25,6 @@ export const JournalDashboard = () => {
           setEntries(sorted);
         } else {
           setEntries([]);
-          console.info("No hay entradas disponibles.");
         }
       } catch (error) {
         console.error("Error al cargar las entradas:", error);
@@ -56,13 +57,23 @@ export const JournalDashboard = () => {
         setEntries(entries.filter((entry) => entry.id !== selectedEntryId));
         setSelectedEntryId(null);
       } catch (error) {
-        console.error("Error deleting entry:", error);
         toast.error("Error al eliminar la entrada");
       }
     } else {
       toast.error("No se puede eliminar una entrada no seleccionada");
     }
   };
+
+  const filteredEntries = entries.filter((entry) => {
+    if (!searchTerm.trim()) return true;
+    if (!Array.isArray(entry.locations) || entry.locations.length === 0)
+      return false;
+    return entry.locations.some(
+      (loc: any) =>
+        typeof loc.name === "string" &&
+        loc.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    );
+  });
 
   const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
 
@@ -85,12 +96,21 @@ export const JournalDashboard = () => {
       <section className={styles.content}>
         <header className={styles.header}>
           <button className={styles.addBtn}>+</button>
-          <input className={styles.search} type="text" placeholder="Buscar" />
+          <input
+            className={styles.search}
+            type="text"
+            placeholder="Buscar por lugar"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              console.log("Buscando:", e.target.value);
+            }}
+          />
         </header>
 
         <div className={styles.body}>
           <div className={styles.entryList}>
-            {entries.map((entry) => (
+            {filteredEntries.map((entry) => (
               <div
                 key={entry.id}
                 className={`${styles.entry} ${
@@ -150,6 +170,13 @@ export const JournalDashboard = () => {
                       <p>No hay imágenes disponibles.</p>
                     )}
                   </div>
+
+                  {/* Limpio logs de debug */}
+                  <pre
+                    style={{ fontSize: 10, background: "#eee", padding: "2px" }}
+                  >
+                    {/* {JSON.stringify(entry, null, 2)} */}
+                  </pre>
                 </>
               ) : (
                 <p>Seleccioná una entrada para ver los detalles.</p>

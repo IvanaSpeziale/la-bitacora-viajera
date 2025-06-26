@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useMyTravelJournal } from "@/pods/my-travel-journal/hook/useMyTravelJournal";
 import Image from "next/image";
+import { JournalEntry } from "@/pods/my-travel-journal/entities/journalEntry";
 
 export const LatestEntriesDashboard = () => {
   const { fetchEntries, removeEntry } = useMyTravelJournal();
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -56,6 +58,17 @@ export const LatestEntriesDashboard = () => {
 
   const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
 
+  const filteredEntries = entries.filter((entry) => {
+    if (!searchTerm.trim()) return true;
+    if (!Array.isArray(entry.locations) || entry.locations.length === 0)
+      return false;
+    return entry.locations.some(
+      (loc: any) =>
+        typeof loc.name === "string" &&
+        loc.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    );
+  });
+
   return (
     <div className={styles.app}>
       <aside className={styles.sidebar}>
@@ -68,12 +81,18 @@ export const LatestEntriesDashboard = () => {
 
       <section className={styles.content}>
         <header className={styles.header}>
-          <input className={styles.search} type="text" placeholder="Buscar" />
+          <input
+            className={styles.search}
+            type="text"
+            placeholder="Buscar por lugar"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </header>
 
         <div className={styles.body}>
           <div className={styles.entryList}>
-            {entries.map((entry) => (
+            {filteredEntries.map((entry) => (
               <div
                 key={entry.id}
                 className={`${styles.entry} ${
@@ -82,6 +101,9 @@ export const LatestEntriesDashboard = () => {
                 onClick={() => setSelectedEntryId(entry.id)}
               >
                 <strong>{new Date(entry.date).toLocaleDateString()}</strong>
+                <div style={{ fontSize: 12, color: "#888" }}>
+                  Usuario: {entry.userId || "N/A"}
+                </div>
                 <p>{entry.description.substring(0, 100)}...</p>
               </div>
             ))}

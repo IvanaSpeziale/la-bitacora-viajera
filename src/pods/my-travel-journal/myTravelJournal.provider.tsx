@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 import { MyTravelJournalContextType } from "./vm/journalEntry.vm";
 import { BrowserStorage } from "@/core/storage/browserStorage";
 import ApiUrl from "@/core/api-config/apiUrl";
@@ -24,6 +24,7 @@ export const MyTravelJournalProvider: React.FC<{ children: ReactNode }> = ({
   const transformEntries = (entries: any[]): JournalEntry[] => {
     return entries.map((entry) => ({
       id: entry.id || "",
+      userId: entry.userId,
       locations: entry.locations,
       date: new Date(entry.date).toISOString(),
       description: entry.description,
@@ -115,6 +116,10 @@ export const MyTravelJournalProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
+  useEffect(() => {
+    fetchEntries();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <MyTravelJournalContext.Provider
       value={{

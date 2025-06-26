@@ -9,7 +9,7 @@ export class JournalEntryDTO {
   favorite: string;
   leastFavorite: string;
   score: number;
-  imageUrls: File[]; // Cambiado de 'images' a 'imageUrls'
+  imageUrls: File[];
 
   constructor(
     locations: Location[],
