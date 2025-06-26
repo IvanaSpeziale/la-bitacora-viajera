@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useState, ReactNode } from "react";
 import { MyTravelJournalContextType } from "./vm/journalEntry.vm";
 import { BrowserStorage } from "@/core/storage/browserStorage";
 import ApiUrl from "@/core/api-config/apiUrl";
