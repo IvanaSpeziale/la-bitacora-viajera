@@ -58,6 +58,7 @@ export const JournalDashboard = () => {
         setSelectedEntryId(null);
       } catch (error) {
         toast.error("Error al eliminar la entrada");
+        console.error("Error deleting entry:", error);
       }
     } else {
       toast.error("No se puede eliminar una entrada no seleccionada");
