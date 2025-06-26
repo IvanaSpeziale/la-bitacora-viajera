@@ -39,13 +39,15 @@ const Header: React.FC = () => {
           <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
         </Link>
       </div>
-      <nav className={styles.nav}>
-        {!user?.is_admin && (
-          <Link href="/journal-dashboard" className={styles.navLink}>
-            Mis bitácoras
-          </Link>
-        )}
-      </nav>
+      {user && (
+        <nav className={styles.nav}>
+          {!user.is_admin && (
+            <Link href="/journal-dashboard" className={styles.navLink}>
+              Mis bitácoras
+            </Link>
+          )}
+        </nav>
+      )}
       <div
         className={styles.userMenu}
         onMouseEnter={() => setMenuOpen(true)}

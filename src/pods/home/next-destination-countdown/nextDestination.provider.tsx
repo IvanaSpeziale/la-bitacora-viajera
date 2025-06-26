@@ -46,7 +46,8 @@ export const NextDestinationProvider: React.FC<{
       console.error("Error fetching next destinations:", error);
       return null;
     }
-  }, [nextDestinationRepository]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addNextDestination = async (
     destination: NextDestinationDTO

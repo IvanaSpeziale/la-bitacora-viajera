@@ -13,7 +13,8 @@ export const LatestEntriesListCard: React.FC = () => {
     fetchEntries().then((data) => {
       if (data) setEntries(data);
     });
-  }, [fetchEntries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={styles.gridContainer}>

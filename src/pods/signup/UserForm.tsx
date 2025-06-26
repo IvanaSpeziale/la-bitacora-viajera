@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import styles from "./signup.module.scss";
-import { useMemo, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/core/pods/auth/hook/useAuth";
 import BackArrow from "@/core/commons/components/backArrow";
 import { useRouter } from "next/navigation";
@@ -38,18 +38,15 @@ export const UserForm: React.FC<UserFormProps> = ({
   const router = useRouter();
 
   const isEdit = mode === "edit";
-  const effectiveInitialValues = useMemo(
-    () =>
-      isEdit && !initialValues && user
-        ? {
-            name: user.name,
-            surname: user.surname,
-            country: user.country,
-            email: user.email,
-          }
-        : initialValues,
-    [isEdit, initialValues, user]
-  );
+  const effectiveInitialValues =
+    isEdit && !initialValues && user
+      ? {
+          name: user.name,
+          surname: user.surname,
+          country: user.country,
+          email: user.email,
+        }
+      : initialValues;
 
   const effectiveOnSubmit =
     isEdit && !onSubmit && user

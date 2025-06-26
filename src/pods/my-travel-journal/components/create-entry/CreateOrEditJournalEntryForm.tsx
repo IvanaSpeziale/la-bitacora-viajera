@@ -58,7 +58,8 @@ const CreateJournalEntryForm: React.FC<CreateJournalEntryFormProps> = ({
     };
 
     loadEntry();
-  }, [entryId, fetchEntryById, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleImgChange = (
     e: React.ChangeEvent<HTMLInputElement>,

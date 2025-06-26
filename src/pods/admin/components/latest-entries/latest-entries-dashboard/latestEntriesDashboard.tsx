@@ -31,7 +31,8 @@ export const LatestEntriesDashboard = () => {
     };
 
     loadEntries();
-  }, [fetchEntries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleHomeRedirect = () => {
     router.push("/admin");

@@ -31,7 +31,8 @@ export const JournalDashboard = () => {
     };
 
     loadEntries();
-  }, [fetchMyEntries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEntryCreationRedirect = () => {
     router.push("/create-journal-entry");

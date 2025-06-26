@@ -8,7 +8,7 @@ export default function JournalEntryPage() {
   return (
     <MyTravelJournalProvider>
       <div className={styles.dashboardGrid}>
-        <ListCard title="Últimos usuarios" seeMoreLink="/admin/users">
+        <ListCard title="Últimos usuarios">
           <LatestUsersListCard />
         </ListCard>
         <ListCard title="Últimas entradas" seeMoreLink="/admin/latest-entries">

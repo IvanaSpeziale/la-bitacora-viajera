@@ -115,11 +115,6 @@ export const MyTravelJournalProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
-  useEffect(() => {
-    fetchMyEntries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <MyTravelJournalContext.Provider
       value={{
